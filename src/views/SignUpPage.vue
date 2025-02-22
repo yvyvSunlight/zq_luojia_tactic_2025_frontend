@@ -53,7 +53,7 @@
         placeholder="请输入你的学院"
         type="text">
       </div>
-      <button @click="goToPreParePage">制作身份牌</button>
+      <button @click="makeIdentityCard">制作身份牌</button>
     </div>
   </div>
 
