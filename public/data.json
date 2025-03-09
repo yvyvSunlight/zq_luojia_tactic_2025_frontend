@@ -1,0 +1,31 @@
+{
+    "id": 0,
+    "name": "string",
+    "leader_id": "string",
+    "members": [
+        {
+            "id": 0,
+            "name": "zhangsan",
+            "student_id": "2023302181127",
+            "college": "wa"
+        },
+        {
+            "id": 1,
+            "name": "wahaha",
+            "student_id": "2023302181111",
+            "college": "wa"
+        },
+        {
+            "id": 2,
+            "name": "shen",
+            "student_id": "2023302181122",
+            "college": "wa"
+        },
+        {
+            "id": 3,
+            "name": "6c",
+            "student_id": "2023302181133",
+            "college": "wa"
+        }
+    ]
+}

@@ -62,10 +62,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+/* eslint-disable-next-line no-unused-vars */
 import { signUp, createTeam, joinTeam, getTeamInfo } from '../api/api'
 import { ElMessage } from 'element-plus'
 /* eslint-disable-next-line no-unused-vars */
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted } from 'vue'
 
 const router = useRouter()
 const studentCollegeInputRef = ref();
@@ -83,20 +84,21 @@ const teamName = ref('');
 const handleBack = () => {
   router.go(-1)
 }
+/* eslint-disable-next-line no-unused-vars */
 const goToPreParePage = () => {
   router.push('/prepare')
 }
 
-const refresh = () => {
-  console.log('refresh')
-};
-
 onMounted(() => {
   console.log('mounted')
-  refresh()
+  const teamId = localStorage.getItem('team_id');
+  if (teamId) {
+    // router.push('/home');
+    console.log('已经有队伍了');
+  }
 })
 /* eslint-disable-next-line no-unused-vars */
-function makeIdentityCard() {
+async function makeIdentityCard() {
   console.log("-----------------");
   
   console.log(studentName.value);
@@ -111,40 +113,23 @@ function makeIdentityCard() {
     return;
   }
   if (picked.value === 'One') {
-    const res = signUp(studentName.value, studentNumber.value, studentCollege.value);
-    console.log(res);
-    if (res.code === 200) {
-      console.log('sign up success');
-      console.log(res);
-      
-      const res2 = createTeam(teamName.value, studentNumber.value);
-      if (res2.code === 200) {
-        ElMessage.success('队伍创建成功');
-        goToPreParePage();
-      } else {
-        ElMessage.error(res2.msg);
-      }
-    } else {
-      ElMessage.error(res.msg);
-    }
-  } else {
-    const teamInfo = getTeamInfo(teamName.value);
-    if (teamInfo.code !== 200) {
-      ElMessage.error(teamInfo.msg);
-      return;
+    try {
+      await signUp(studentName.value, studentNumber.value, studentCollege.value);
+      const student_num = localStorage.getItem('student_num');
+      await createTeam(teamName.value, student_num);
+      goToPreParePage();
+    } catch (error) {
+      ElMessage.error('请求失败：', error);
     }
 
-    const res = signUp(studentName.value, studentNumber.value, studentCollege.value);
-    if (res.code === 200) {
-      const res2 = joinTeam(teamName.value, studentNumber.value);
-      if (res2.code === 200) {
-        ElMessage.success('加入队伍成功');
-        goToPreParePage();
-      } else {
-        ElMessage.error(res2.msg);
-      }
-    } else {
-      ElMessage.error(res.msg);
+  } else {
+    try {
+      signUp(studentName.value, studentNumber.value, studentCollege.value);
+      const user_id = localStorage.getItem('user_id');
+      joinTeam(user_id, teamName.value);
+      goToPreParePage();
+    } catch (error) {
+      ElMessage.error('请求失败：', error);
     }
   } 
   
