@@ -62,10 +62,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-/* eslint-disable-next-line no-unused-vars */
-import { signUp, createTeam, joinTeam, getTeamInfo, deleteUser } from '../api/api'
+import { signUp, createTeam, joinTeam, deleteUser } from '../api/api'
 import { ElMessage } from 'element-plus'
-/* eslint-disable-next-line no-unused-vars */
 import { onMounted } from 'vue'
 
 const router = useRouter()
@@ -84,7 +82,6 @@ const teamName = ref('');
 const handleBack = () => {
   router.go(-1)
 }
-/* eslint-disable-next-line no-unused-vars */
 const goToPreParePage = () => {
   router.push('/prepare')
 }
@@ -118,7 +115,7 @@ async function makeIdentityCard() {
     ElMessage.error('学院过长');
     return;
   }
-  if (teamName.value.length > 20) {
+  if (teamName.value.length > 10) {
     ElMessage.error('队伍名过长');
     return;
   }
@@ -233,8 +230,6 @@ async function makeIdentityCard() {
     height: 590px;
     left: 0px;
     bottom: 0;
-    // top: 203px;
-
     box-shadow: 5px -4px 20px rgba(0, 0, 0, 0.15);
     border-radius: 40px 40px 0px 0px;
     display: flex;
@@ -263,7 +258,6 @@ async function makeIdentityCard() {
         }
       }
     }
-    // align-items: center;
     #whu2 {
       position: absolute;
       width: 78px;
@@ -295,8 +289,6 @@ async function makeIdentityCard() {
     .message {
       width: 269px;
       height: 62px;
-      // margin-left: 48px;
-      // border-width: 1px;
       border-bottom: 1px solid #979797; 
       border-left: none;
       border-right: none; 
