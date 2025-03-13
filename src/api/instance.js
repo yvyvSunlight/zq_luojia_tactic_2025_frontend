@@ -21,6 +21,9 @@ instance.interceptors.response.use(
       }
     } else if (response.data.Code !== 200) {
       ElMessage.error(response.data.message);
+      // console.log('打印响应体');
+      // console.log(response);
+      // return response;
     }
     return response.data;
   },
@@ -38,6 +41,9 @@ instance.interceptors.response.use(
     //     ElMessage.error(error.response.status + '未知错误！请稍等或联系工作人员！');
     //   }
     // }
+    // console.log('打印错误');
+    // console.log(error);
+    // console.log(error.response)
     return Promise.reject(error);
   },
 );

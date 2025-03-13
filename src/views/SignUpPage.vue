@@ -63,7 +63,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 /* eslint-disable-next-line no-unused-vars */
-import { signUp, createTeam, joinTeam, getTeamInfo } from '../api/api'
+import { signUp, createTeam, joinTeam, getTeamInfo, deleteUser } from '../api/api'
 import { ElMessage } from 'element-plus'
 /* eslint-disable-next-line no-unused-vars */
 import { onMounted } from 'vue'
@@ -92,29 +92,43 @@ const goToPreParePage = () => {
 onMounted(() => {
   console.log('mounted')
   const teamId = localStorage.getItem('team_id');
+  console.log('teamId:', teamId);
   if (teamId) {
-    // router.push('/home');
     console.log('已经有队伍了');
+    handleBack();
+    console.log('handleBack');
   }
 })
-/* eslint-disable-next-line no-unused-vars */
 async function makeIdentityCard() {
-  console.log("-----------------");
-  
-  console.log(studentName.value);
   console.log("显示输入的学号，姓名，学院，队伍名字，选择的是创建队伍还是加入队伍");
   console.log(studentNumber.value, studentName.value, studentCollege.value, teamName.value, picked.value);
   if(!(studentCollege.value && studentName.value && studentNumber.value && teamName.value && picked.value)) {
     ElMessage.error('请填写完整信息')
     return;
   }
-  if (!/^20[12][890123]\d{9}$/.test(studentNumber.value)) {
+  if (!/^20[12][8901234]\d{9}$/.test(studentNumber.value)) {
     ElMessage.error('请输入正确的学号');
+    return;
+  }
+  if (studentName.value.length > 10) {
+    ElMessage.error('姓名过长');
+    return;
+  }
+  if (studentCollege.value.length > 20) {
+    ElMessage.error('学院过长');
+    return;
+  }
+  if (teamName.value.length > 20) {
+    ElMessage.error('队伍名过长');
     return;
   }
   if (picked.value === 'One') {
     try {
-      await signUp(studentName.value, studentNumber.value, studentCollege.value);
+      const res0 = await signUp(studentName.value, studentNumber.value, studentCollege.value);
+      if (res0.student_id[0] === 'user with this student id already exists.') {
+        ElMessage.error('学号已存在');
+        return;
+      }
       const student_num = localStorage.getItem('student_num');
       await createTeam(teamName.value, student_num);
       goToPreParePage();
@@ -123,14 +137,39 @@ async function makeIdentityCard() {
     }
 
   } else {
-    try {
-      signUp(studentName.value, studentNumber.value, studentCollege.value);
-      const user_id = localStorage.getItem('user_id');
-      joinTeam(user_id, teamName.value);
-      goToPreParePage();
-    } catch (error) {
-      ElMessage.error('请求失败：', error);
+    console.log('========== 注册');
+    const res0 = await signUp(studentName.value, studentNumber.value, studentCollege.value);
+    console.log('========== res0:', res0);
+    console.log('res0.student_id:', res0.student_id);
+    if (res0.student_id[0] === 'user with this student id already exists.') {
+      ElMessage.error('学号已存在');
+      return;
+    } else if (res0.name[0] === 'Ensure this field has no more than 10 characters.') {
+      ElMessage.error('姓名过长');
+      return;
     }
+    const user_id = localStorage.getItem('user_id');       // 拿到user_id
+    console.log('user_id:', user_id);
+    console.log('========== 加入队伍');
+    const res = await joinTeam(user_id, teamName.value);
+    console.log('res:', res);
+    if(res.error === 'Team is full') {
+      ElMessage.error('队伍已满');
+      deleteUser(user_id);
+      return;
+    } else if (res.error === 'Team not found') {
+      ElMessage.error('队伍不存在');
+      deleteUser(user_id);
+      return;
+    } else if (res.error) {
+      ElMessage.error('未知错误');
+      deleteUser(user_id);
+      return;
+    }
+    console.log('res:', res);
+  
+    console.log('执行goToPreParePage');
+    goToPreParePage();
   } 
   
 }
@@ -196,7 +235,7 @@ async function makeIdentityCard() {
     background-color: #FFFFFF;
     position: absolute;
     width: 375px;
-    height: 564px;
+    height: 590px;
     left: 0px;
     bottom: 0;
     // top: 203px;

@@ -4,7 +4,12 @@
       <img src="@/assets/icons/homeCherry.svg" id="cherry">
       
         <img src="@/assets/icons/homeTitle.png" id="title">
-        <button @click="goToSignUpPage">
+        <button @click="goToSignUpPage" v-if="haveTeam">
+          继续游戏
+          <img src="@/assets/icons/flag.svg" id="flag">
+          
+        </button >
+        <button @click="goToSignUpPage" v-else>
           新人报名
           <img src="@/assets/icons/flag.svg" id="flag">
           
@@ -19,18 +24,36 @@
 </template>
   
 <script setup>
-// import { ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-// import { onMounted, onUnmounted } from 'vue'
+import { onMounted } from 'vue'
 
+const haveTeam = ref(false)
 console.log('home page')
 const router = useRouter()
 const goToSignUpPage = () => {
-  // console.log('click1')
-  router.push('/signUp')
-  // console.log('click')
+  if (haveTeam.value) {
+    // let start_time = localStorage.getItem('start_time')
+    // if (start_time) {
+    //   router.push('/playing')
+    // } else {
+      router.push('/prepare')
+    // }
+  } else {
+    router.push('/signUp')
+  }
 }
   
+onMounted(() => {
+  const team_id = localStorage.getItem('team_id')
+  if (team_id) {
+    haveTeam.value = true
+  }
+  console.log('home page mounted')
+  // console.log('click')
+  // router.push('/signUp')
+})
+
 // const eventTest = () => {
 //   console.log('click event test')
 // }
@@ -70,6 +93,7 @@ const goToSignUpPage = () => {
         position: absolute;
         left: 14px;
         top:275px;
+        z-index:2;
       }
       button {
         width: 194px;
@@ -103,19 +127,11 @@ const goToSignUpPage = () => {
     height: auto;
     }
     #wave2 {
-      /* 首页背景波纹下 */
       position: absolute;
       left: -29px;
       width: 394px;
       height: 394px;
-
-
-      /* 首页背景波纹下 */
-
       top: 54.06%;
-
-
-
     }
     .authorArea {
       position: absolute;

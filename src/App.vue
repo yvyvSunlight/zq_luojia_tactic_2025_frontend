@@ -1,25 +1,42 @@
 <template>
    <RouterView> </RouterView>
+   <LoadingPage v-if="isLoading" />
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router';
+// eslint-disable-next-line no-unused-vars
+import { ref, onMounted, onUnmounted } from 'vue';
+// eslint-disable-next-line no-unused-vars
+import { RouterView, useRouter } from 'vue-router';
+import LoadingPage from './components/LoadingPage.vue';
+const isLoading = ref(true);
+const router = useRouter();
 
-// import HelloWorld from './components/HelloWorld.vue'
-// import router from './router';
+const routeGuard = (to, from, next) => {
+  isLoading.value = true;
+  next();
+}
 
-// export default {
-//   name: 'App',
-//   components: {
-//     HelloWorld
-//   }
-// }
-// export default {
-//   name: 'App',
-//   components: {
-//     HelloWorld
-//   }
-// }
+const routeComplete = () => {
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 300);
+}
+
+onMounted(() => {
+  router.beforeEach(routeGuard);
+  router.afterEach(routeComplete);
+});
+// 卸载路由守卫
+onUnmounted(() => {
+  router.beforeEach((...args) => {
+    // eslint-disable-next-line no-unused-vars
+    const [to, from, next] = args;
+    next();
+  });
+});
+
+
 </script>
 
 <style>
