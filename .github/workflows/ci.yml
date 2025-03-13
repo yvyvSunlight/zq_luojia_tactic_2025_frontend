@@ -35,8 +35,8 @@ jobs:
         uses: yizhoumo/setup-ossutil@v1
         with:
           endpoint: oss-cn-hangzhou.aliyuncs.com
-          access-key-id: ${{ secrets.ALI_KEY_ID }}
-          access-key-secret: ${{ secrets.ALI_KEY_SECRET }}
+          access-key-id: ${{ secrets.AL_KEY_ID }}
+          access-key-secret: ${{ secrets.AL_KEY_SECRET }}
 
       - name: Upload files to OSS
         run: |
@@ -47,7 +47,7 @@ jobs:
       - name: Refresh CDN
         uses: visionwx/ali-cdn-refresh@v0.1.1
         with:
-          accessKeyId: ${{ secrets.ALI_KEY_ID }}
-          accessKeySecret: ${{ secrets.ALI_KEY_SECRET }}
+          accessKeyId: ${{ secrets.AL_KEY_ID }}
+          accessKeySecret: ${{ secrets.AL_KEY_SECRET }}
           type: Directory
           path: https://luojiatactic.ziqiang.net.cn/
