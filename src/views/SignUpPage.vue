@@ -149,10 +149,7 @@ async function makeIdentityCard() {
       return;
     }
     const user_id = localStorage.getItem('user_id');       // 拿到user_id
-    console.log('user_id:', user_id);
-    console.log('========== 加入队伍');
     const res = await joinTeam(user_id, teamName.value);
-    console.log('res:', res);
     if(res.error === 'Team is full') {
       ElMessage.error('队伍已满');
       deleteUser(user_id);
@@ -166,9 +163,7 @@ async function makeIdentityCard() {
       deleteUser(user_id);
       return;
     }
-    console.log('res:', res);
   
-    console.log('执行goToPreParePage');
     goToPreParePage();
   } 
   
