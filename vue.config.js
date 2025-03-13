@@ -22,9 +22,15 @@ module.exports = defineConfig({
             selectorBlackList: ['.ignore'], // 忽略转换的类名
             minPixelValue: 1, // 小于等于1px的px不转换
             mediaQuery: false, // 是否在媒体查询中转换px
+            landscapeUnit: 'vw', // 横屏时使用的单位
+          landscapeWidth: 1125, // 横屏时使用的视口宽度
           })
         );
         return options;
       });
   },
 })
+
+module.exports = {
+  publicPath: './'
+}
