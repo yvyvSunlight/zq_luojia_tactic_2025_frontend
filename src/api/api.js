@@ -150,15 +150,12 @@ export const recordStartTime = async (team_id, start_time) => {
     const res = await instance.put(`/start_time/${team_id}`, {
         start_time
     });
-    console.log("recordStartTime时记录的队伍id", team_id);
-    console.log("recordStartTime时记录的起始时间", res.start_time);
     localStorage.setItem('start_time', res.start_time);
     return res;
 }
 
 export const  getStartTime = async (team_id) => {
     const res = await instance.get(`/start_time/${team_id}`);
-    // localStorage.setItem('start_time', res.start_time);
     return res;
 }
 

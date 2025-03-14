@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { getTeamInfo, recordStartTime, getStartTime, putTeamPosition, getTeamPosition, collectReserveTime } from '@/api/api'
+import { getTeamInfo, recordStartTime, getStartTime, putTeamPosition, collectReserveTime } from '@/api/api'
 import QrScanner from '../components/QRScanner.vue';
 import { ElMessage } from 'element-plus';
 const themeVars = {
@@ -28,41 +28,33 @@ const gotoPlay = () => {
 }
 
 const gotoPlayingPage = () => {
-  let res = getStartTime(localStorage.getItem('team_id'))
-  let start_time = res.start_time
-  console.log("点击按钮点击按钮:",start_time)
+  let res = getStartTime(localStorage.getItem('team_id'))   // 拿到队伍的开始时间
+  let start_time = res.start_time                           // 拿到队伍的开始时间
   if(start_time) {
-    router.push('/playing')
-    return
+    router.push('/playing')                                 // 如果有开始时间，就直接进入打卡界面
+    return             
   }
-  showQrCodeReader.value = true
+  showQrCodeReader.value = true                             // 如果没有开始时间，就弹出扫码界面
 }
 
 const fetchTeamMembers = async () => {
   try {
+
     const team_id = localStorage.getItem('team_id')
-    const res = await getTeamInfo(team_id)
+    const res = await getTeamInfo(team_id)              // 拿到队员信息 队伍名
     teamMembers.value = res.members
-    console.log("res:",res)
     teamName.value = res.name
-    localStorage.setItem('team_name', res.name)
-    const res2 = await getStartTime(localStorage.getItem('team_id'))
-    console.log("getStartTime api拿到的res:",res2)
-    console.log("getStartTime api拿到的res.start_time:",res2[team_id-1].start_time)
+    localStorage.setItem('team_name', res.name)         // 存储队伍名 （option）
+    const res2 = await getStartTime(team_id)            // 拿到队伍的开始时间
     if (res2[team_id-1].start_time) {
-      isBegin.value = true
+      isBegin.value = true                              // 如果有开始时间，button就可以进入打卡界面
+      localStorage.setItem('start_time', res2[team_id-1].start_time) 
     }
   } catch (error) {
     console.log("Error fetching team members:",error)
+    ElMessage.error('获取队伍信息失败')
   }
 }
-const scanResult = ref(null);
-
-/* eslint-disable-next-line no-unused-vars */
-const handleScanResult = (result) => {
-  scanResult.value = result;
-  console.log('Scan result:', scanResult.value);
-};
 
 onMounted(() => {
   fetchTeamMembers()
@@ -79,37 +71,23 @@ const showQrCodeReader = ref(false)
 
  
 const onDecodeHandler = async (data) => {
-  console.log('onDecodeHandler', data)
+  console.log('onDecodeHandler', data)  
   
   showQrCodeReader.value = false
   if(data === "guicao_sysy") {
-    
+    // 如果解码结果是 guicao_sysy 则进入打卡界面
+    const start_time = new Date()                                  // 拿到现在的起始时间
+    const team_id = localStorage.getItem('team_id')                 // 拿到队伍id
 
-    let res0 = await getTeamPosition(localStorage.getItem('team_id'))
-    console.log("getTeamPosition api拿到的res0:",res0)
-    console.log("getTeamPosition api拿到的res0.position:",res0.position)
-    const start_time = new Date()
-    console.log("现在生成的start_time:",start_time)
-    const team_id = localStorage.getItem('team_id')
+    putTeamPosition(team_id, "guicao")                             // 更新队伍位置
 
+    let res = await getStartTime(team_id)                          // 拿到队伍的开始时间 应该是没有的（没用）（可用于debug） 如果有开始时间则不会进入解码
+    console.log("getStartTime api拿到的res.start_time:",res.start_time)  // debug
 
-    putTeamPosition(team_id, "guicao")
-    console.log("记录起始时间前先调用下getStartTime api看看:",team_id)
-    let res = await getStartTime(team_id)
-    console.log("getStartTime api拿到的res.start_time:",res.start_time)
-
-    res = await recordStartTime(team_id, start_time)
-    console.log("---")
-
-    res = await getStartTime(team_id)
-    console.log("recordStartTime后再调用下getStartTime api看看:",team_id)
-
-    console.log("拿到的起始时间:",res[team_id-1].start_time)
-    console.log("拿到的res:",res)
-
-    router.push('/playing')
+    recordStartTime(team_id, start_time)                            // 记录起始时间
+    router.push('/playing')                                         // 进入打卡界面
   } else {
-    wrongPosition.value = true
+    wrongPosition.value = true                                     // 如果解码结果不是 guicao_sysy 则弹出提示框
   }
    
 }
@@ -122,7 +100,7 @@ const columns = [
         { text: '周六', value: '周六' },
       ],
       [
-        { text: '9:00-11:00', value: '09:00-11:00' },
+        { text: '09:00-11:00', value: '09:00-11:00' },
         { text: '10:00-12:00', value: '10:00-12:00' },
         { text: '11:00-13:00', value: '11:00-13:00' },
         { text: '12:00-14:00', value: '12:00-14:00' },
