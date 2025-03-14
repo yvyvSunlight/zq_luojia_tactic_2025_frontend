@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
-const baseURL = 'https://121.36.231.2:8080/v6'
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://121.36.231.2:8080/v6' : 'http://121.36.231.2:8080/v6';
 // 区分生产环境和开发环境
 
 
@@ -15,15 +15,14 @@ export const instance = axios.create({
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
+    console.log('打印响应体');
+    console.log(response);
     if (!response.data.Code) {
       if (response.data.detail) {
         ElMessage.error(response.data.detail);
       }
     } else if (response.data.Code !== 200) {
       ElMessage.error(response.data.message);
-      // console.log('打印响应体');
-      // console.log(response);
-      // return response;
     }
     return response.data;
   },
@@ -32,19 +31,11 @@ instance.interceptors.response.use(
       // 请求超时
       console.log(error)
       ElMessage.error('请求超时！请检查网络状况！');
-    }
-    // if (error.response) {
-    //   if (error.response.data.message) {
-    //     if (error.response.data.message !== '打过卡了，快走') {
-    //       ElMessage.error(error.response.data.message);
-    //     }
-    //   } else {
-    //     ElMessage.error(error.response.status + '未知错误！请稍等或联系工作人员！');
-    //   }
-    // }
-    // console.log('打印错误');
-    // console.log(error);
-    // console.log(error.response)
+    } else if (!error.response) {
+      // 没有响应的情况
+      console.log('没有响应');
+      ElMessage.error('请求失败，没有响应');
+    } 
     return Promise.reject(error);
   },
 );

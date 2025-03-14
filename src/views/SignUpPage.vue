@@ -122,13 +122,21 @@ async function makeIdentityCard() {
   if (picked.value === 'One') {
     try {
       const res0 = await signUp(studentName.value, studentNumber.value, studentCollege.value);
+      if (!res0) {
+        console.log('注册失败  mei you xiangying --');
+        return;
+      }
       if (res0.student_id[0] === 'user with this student id already exists.') {
         ElMessage.error('学号已存在');
         return;
       }
       const student_num = localStorage.getItem('student_num');
-      await createTeam(teamName.value, student_num);
-      goToPreParePage();
+      const res = await createTeam(teamName.value, student_num);
+      console.log(' true or false res:', res);
+      if (res === true)
+      {
+        goToPreParePage();
+      }
     } catch (error) {
       ElMessage.error('请求失败：', error);
     }
@@ -136,8 +144,10 @@ async function makeIdentityCard() {
   } else {
     console.log('========== 注册');
     const res0 = await signUp(studentName.value, studentNumber.value, studentCollege.value);
-    console.log('========== res0:', res0);
-    console.log('res0.student_id:', res0.student_id);
+    if (!res0) {
+      console.log('注册失败  mei you xiangying --');
+      return;
+    }
     if (res0.student_id[0] === 'user with this student id already exists.') {
       ElMessage.error('学号已存在');
       return;

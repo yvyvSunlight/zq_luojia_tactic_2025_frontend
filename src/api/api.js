@@ -1,5 +1,5 @@
 import { instance } from './instance.js'
-
+import { ElMessage } from 'element-plus';
 // 接口
 
 
@@ -9,18 +9,6 @@ import { instance } from './instance.js'
  * @param {*} student_num: 学生学号
  * @param {*} college: 学院
  * @return {[{id, name, student_num, college}]} 返回用户信息
- *  
- * @example
- * login({
- * username: 'username',
- * password: 'password'
- * })
- * .then(res => {
- * console.log(res)
- * })
- * .catch(err => {
- * console.log(err)
- * })
  */
 
 export const signUp = async (name, student_id, college) => {
@@ -34,15 +22,18 @@ export const signUp = async (name, student_id, college) => {
             college,
             password
         });
-        // console.log("注册成功----");
-        // console.log(res);
-        // console.log("保存localStorage user_id student_num"); 
+        console.log("============ sign up api保存localStorage user_id student_num"); 
         localStorage.setItem('user_id', res.id);
         localStorage.setItem('student_num', res.student_id);
         return res;
     } catch (error) {
-        console.log("注册失败");
+        console.log("sign up api注册失败");
         console.log(error);
+        console.log("sign up api注册失败时的返回值");
+        if (!error.response) {
+            console.log("==== sign up 的返回值为false ==== 没有响应");
+            return false;
+        }
         return error.response.data;
     }
 }
@@ -54,47 +45,49 @@ export const signUp = async (name, student_id, college) => {
  * 
  */
 export const joinTeam = async (user_id, team_name) => {
-    console.log("加入队伍时的参数");
-    console.log(user_id);
-    console.log(team_name);
     try {
         const res = await instance.put(`/enter_team`, {
             user_id,
             team_name
         });
-        console.log("加入队伍之后的返回值");
-        console.log("join team join team")
-        console.log(res);
         localStorage.setItem('team_id', res.team_id);
         return res;
     }
     catch (error) {
-        console.log("加入队伍失败");
-        console.log(error);
+        const user_id = localStorage.getItem('user_id');
+        if (user_id) {
+            deleteUser(user_id);
+        }
+        if (!error.response) {
+            return false;
+        }
         return error.response.data;
     }
 }
 
 export const createTeam = async (name, leader_id) =>
 {
-    console.log("创建队伍之前");
-    console.log(name, leader_id);
-    const res = await instance.post('/team', {
-        name,
-        leader_id
-    });
-    console.log("创建队伍之后");
-    console.log(res);
-    console.log("打印创建队伍得res之后");
-    localStorage.setItem('team_id', res.id);
-    localStorage.setItem('team_name', name);
-    console.log("localStorage 中的值:");
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key);
-        console.log(`${key}: ${value}`);
+    try {
+        const res = await instance.post('/team', {
+            name,
+            leader_id
+        });
+        localStorage.setItem('team_id', res.id);
+        localStorage.setItem('team_name', name);
+        return true;
+    } catch (error) {
+        console.log("创建队伍失败 createTeam -api");
+        console.log(error);
+        if (error.response.data.name[0] === "team with this name already exists.") {
+            const user_id = localStorage.getItem('user_id');
+            if (user_id) {
+                ElMessage.error("队伍名已存在");
+                deleteUser(user_id);
+                return false;
+            }
+        }
+        return false;
     }
-    return res;
 }
 
 export const quitTeam = async (user_id, team_id) => {
@@ -111,7 +104,6 @@ export const quitTeam = async (user_id, team_id) => {
  */
 
 export const getTeamInfo = async (team_id) => {
-    console.log("进入getTeamInfo获取队伍信息");
     console.log(team_id);
     const res = await instance.get(`/team/${team_id}`);
     return res;
@@ -151,6 +143,7 @@ export const recordStartTime = async (team_id, start_time) => {
 
 export const  getStartTime = async (team_id) => {
     const res = await instance.get(`/start_time/${team_id}`);
+    // localStorage.setItem('start_time', res.start_time);
     return res;
 }
 
@@ -184,5 +177,7 @@ export const getEndTime = async (team_id) => {
  */
 export const deleteUser = async (user_id) => {
     const res = await instance.delete(`/user/${user_id}`);
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('student_num');
     return res;
 }
