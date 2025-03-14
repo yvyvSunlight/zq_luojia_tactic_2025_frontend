@@ -3,7 +3,6 @@ import HomePage from '../views/HomePage.vue'
 import SignUpPage from '../views/SignUpPage.vue'
 import PreparePage from '@/views/PreparePage.vue'
 import PlayingPage from '../views/PlayingPage.vue'
-// import EndPage from '../views/EndPage.vue'
 
 const routes = [
     {
@@ -26,11 +25,6 @@ const routes = [
         name: 'PlayingPage',
         component: PlayingPage
     }
-    // {
-    //     path: '/end',
-    //     name: 'EndPage',
-    //     component: EndPage
-    // }
 ]
 
 const router = createRouter({

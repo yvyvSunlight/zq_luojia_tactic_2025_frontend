@@ -22,10 +22,9 @@ export const signUp = async (name, student_id, college) => {
             college,
             password
         });
-        console.log("============ sign up api保存localStorage user_id student_num"); 
         localStorage.setItem('user_id', res.id);
         localStorage.setItem('student_num', res.student_id);
-        return res;
+        return true;
     } catch (error) {
         console.log("sign up api注册失败");
         console.log(error);
@@ -34,7 +33,13 @@ export const signUp = async (name, student_id, college) => {
             console.log("==== sign up 的返回值为false ==== 没有响应");
             return false;
         }
-        return error.response.data;
+        const data = error.response.data;
+        if (data.student_id[0] === 'user with this student id already exists.') {
+            ElMessage.error('学号已存在');
+          } else {
+            ElMessage.error('未知错误');
+          }
+        return false;
     }
 }
 
@@ -51,7 +56,8 @@ export const joinTeam = async (user_id, team_name) => {
             team_name
         });
         localStorage.setItem('team_id', res.team_id);
-        return res;
+        localStorage.setItem('team_name', team_name);
+        return true;
     }
     catch (error) {
         const user_id = localStorage.getItem('user_id');
@@ -61,7 +67,15 @@ export const joinTeam = async (user_id, team_name) => {
         if (!error.response) {
             return false;
         }
-        return error.response.data;
+        const data =  error.response.data;
+        if(data.error === 'Team is full') {
+            ElMessage.error('队伍已满');
+          } else if (data.error === 'Team not found') {
+            ElMessage.error('队伍不存在');
+          } else if (data.error) {
+            ElMessage.error('未知错误');
+          }
+        return false;
     }
 }
 
@@ -78,10 +92,17 @@ export const createTeam = async (name, leader_id) =>
     } catch (error) {
         console.log("创建队伍失败 createTeam -api");
         console.log(error);
-        if (error.response.data.name[0] === "team with this name already exists.") {
+        if (!error.response) {
             const user_id = localStorage.getItem('user_id');
             if (user_id) {
-                ElMessage.error("队伍名已存在");
+                deleteUser(user_id);
+            }
+            return false;
+        }
+        if (error.response.data.name[0] === "team with this name already exists.") {
+            const user_id = localStorage.getItem('user_id');
+            ElMessage.error("队伍名已存在");
+            if (user_id) {
                 deleteUser(user_id);
                 return false;
             }

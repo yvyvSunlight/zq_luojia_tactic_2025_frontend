@@ -297,6 +297,7 @@ const bookTime = () => {
     height: 26px;
     left: 10px;
     top: 10px;
+    z-index: 10;
   }
   .teamName {
     position: relative;

@@ -1,6 +1,6 @@
 <template>
     <div class="bg">
-      <img src="@/assets/icons/returnLogo.svg" alt="" id="returnLogo" @click="handleBack">
+      <img src="@/assets/icons/returnLogo.svg" alt="" id="returnLogo" @click="goBack">
       <div class="titleArea">
         <div class="title" id="title1">注册成为攻略者</div>
         <div class="title" id="title2">填写获得你的身份牌</div>
@@ -62,7 +62,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { signUp, createTeam, joinTeam, deleteUser } from '../api/api'
+import { signUp, createTeam, joinTeam } from '../api/api'
 import { ElMessage } from 'element-plus'
 import { onMounted } from 'vue'
 
@@ -79,7 +79,7 @@ const teamName = ref('');
 
 
 
-const handleBack = () => {
+const goBack = () => {
   router.go(-1)
 }
 const goToPreParePage = () => {
@@ -92,8 +92,8 @@ onMounted(() => {
   console.log('teamId:', teamId);
   if (teamId) {
     console.log('已经有队伍了');
-    handleBack();
-    console.log('handleBack');
+    goBack();
+    console.log('goBack');
   }
 })
 async function makeIdentityCard() {
@@ -121,20 +121,14 @@ async function makeIdentityCard() {
   }
   if (picked.value === 'One') {
     try {
-      const res0 = await signUp(studentName.value, studentNumber.value, studentCollege.value);
-      if (!res0) {
-        console.log('注册失败  mei you xiangying --');
-        return;
-      }
-      if (res0.student_id[0] === 'user with this student id already exists.') {
-        ElMessage.error('学号已存在');
+      const signSucc = await signUp(studentName.value, studentNumber.value, studentCollege.value);
+      if (!signSucc) {
         return;
       }
       const student_num = localStorage.getItem('student_num');
-      const res = await createTeam(teamName.value, student_num);
-      console.log(' true or false res:', res);
-      if (res === true)
-      {
+      const teamSucc = await createTeam(teamName.value, student_num);
+      console.log(' true or false res:', teamSucc);
+      if (signSucc && teamSucc) {
         goToPreParePage();
       }
     } catch (error) {
@@ -143,42 +137,17 @@ async function makeIdentityCard() {
 
   } else {
     console.log('========== 注册');
-    const res0 = await signUp(studentName.value, studentNumber.value, studentCollege.value);
-    if (!res0) {
-      console.log('注册失败  mei you xiangying --');
-      return;
-    }
-    if (res0.student_id[0] === 'user with this student id already exists.') {
-      ElMessage.error('学号已存在');
-      return;
-    } else if (res0.name[0] === 'Ensure this field has no more than 10 characters.') {
-      ElMessage.error('姓名过长');
+    const signSucc = await signUp(studentName.value, studentNumber.value, studentCollege.value);
+    if (!signSucc) {
       return;
     }
     const user_id = localStorage.getItem('user_id');       // 拿到user_id
-    const res = await joinTeam(user_id, teamName.value);
-    if(res.error === 'Team is full') {
-      ElMessage.error('队伍已满');
-      deleteUser(user_id);
-      return;
-    } else if (res.error === 'Team not found') {
-      ElMessage.error('队伍不存在');
-      deleteUser(user_id);
-      return;
-    } else if (res.error) {
-      ElMessage.error('未知错误');
-      deleteUser(user_id);
-      return;
+    const joinSucc = await joinTeam(user_id, teamName.value);
+    if (signSucc && joinSucc) {
+      goToPreParePage();
     }
-  
-    goToPreParePage();
-  } 
-  
+  }   
 }
-
-
-
-
 
 </script>
 
@@ -205,6 +174,7 @@ async function makeIdentityCard() {
     width: 26px;
     height: 26px;
     margin: 10px 0 0 10px;
+    z-index: 10;
   }
   .titleArea {
     position: relative;
