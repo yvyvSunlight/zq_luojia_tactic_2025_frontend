@@ -73,23 +73,13 @@ const memberImage = (index) => {
   return teamMembers.value[index - 1] ? require('@/assets/icons/member.svg') : require('@/assets/icons/memberNone.svg');
 };
 
-/* eslint-disable-next-line no-unused-vars */
-// import { reactive, onUnmounted, nextTick, getCurrentInstance, watchEffect } from "vue";
+
  
 const showQrCodeReader = ref(false)
-// const paymentData = reactive({
-//   orderId: '',
-//   authCode: '',
-//   drawer: false
-// })
 
-/* eslint-disable-next-line no-unused-vars */
-const qrcodeDetail = ref({})
  
 const onDecodeHandler = async (data) => {
   console.log('onDecodeHandler', data)
-  // paymentData.authCode = getContentFromUrl(data)
-
   
   showQrCodeReader.value = false
   if(data === "guicao_sysy") {
@@ -106,7 +96,6 @@ const onDecodeHandler = async (data) => {
     putTeamPosition(team_id, "guicao")
     console.log("记录起始时间前先调用下getStartTime api看看:",team_id)
     let res = await getStartTime(team_id)
-    // console.log("getStartTime api拿到的res:",res)
     console.log("getStartTime api拿到的res.start_time:",res.start_time)
 
     res = await recordStartTime(team_id, start_time)
@@ -127,18 +116,11 @@ const onDecodeHandler = async (data) => {
 const qrReaderClose = () => {
   showQrCodeReader.value = false
 }
-// const getContentFromUrl = (url) => {
-//   const urlObj = new URL(url);
-//   const content = urlObj.searchParams.get('content');
-//   return content;
-// }
 
 const columns = [
-      // 第一列
       [
         { text: '周六', value: '周六' },
       ],
-      // 第二列
       [
         { text: '9:00-11:00', value: '09:00-11:00' },
         { text: '10:00-12:00', value: '10:00-12:00' },
@@ -162,7 +144,6 @@ const selectedValues = ref(['周六', '09:00-11:00']);
 // 确认选择
 const onConfirm = async () => {
   showPicker.value = false;
-
   try {
     const team_id = localStorage.getItem('team_id')
     const reserve_start_time = "2025-03-15 "+selectedValues.value[1].substring(0,5)
@@ -212,20 +193,20 @@ const bookTime = () => {
         <QrScanner v-if="showQrCodeReader" @decode="onDecodeHandler" @close="qrReaderClose"></QrScanner>
       <div class="promptMessage">注：扫码后即计时开始！</div>
 
-<div class="container">
-  <van-config-provider :theme-vars="themeVars">
-    <van-popup v-model:show="showPicker" round position="bottom">
-      <van-picker
-        v-model="selectedValues"
-        :columns="columns"
-        title="请选择"
-        @cancel="showPicker = false"
-        @confirm="onConfirm"
-        option-height="54px"
-        visible-option-num="5"
-      />
-    </van-popup>
-  </van-config-provider>
+  <div class="container">
+    <van-config-provider :theme-vars="themeVars">
+      <van-popup v-model:show="showPicker" round position="bottom">
+        <van-picker
+          v-model="selectedValues"
+          :columns="columns"
+          title="请选择"
+          @cancel="showPicker = false"
+          @confirm="onConfirm"
+          option-height="54px"
+          visible-option-num="5"
+        />
+      </van-popup>
+    </van-config-provider>
   </div>
   <van-dialog v-model:show="wrongPosition" title="" confirm-button-color="#000">
           <div class="myDialog">

@@ -136,12 +136,11 @@ async function makeIdentityCard() {
     }
 
   } else {
-    console.log('========== 注册');
     const signSucc = await signUp(studentName.value, studentNumber.value, studentCollege.value);
     if (!signSucc) {
       return;
     }
-    const user_id = localStorage.getItem('user_id');       // 拿到user_id
+    const user_id = localStorage.getItem('user_id');      
     const joinSucc = await joinTeam(user_id, teamName.value);
     if (signSucc && joinSucc) {
       goToPreParePage();

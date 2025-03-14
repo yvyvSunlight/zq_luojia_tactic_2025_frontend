@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import SignUpPage from '../views/SignUpPage.vue'
-import PreparePage from '@/views/PreparePage.vue'
+import PreparePage from '../views/PreparePage.vue'
 import PlayingPage from '../views/PlayingPage.vue'
 
 const routes = [

@@ -26,11 +26,7 @@ export const signUp = async (name, student_id, college) => {
         localStorage.setItem('student_num', res.student_id);
         return true;
     } catch (error) {
-        console.log("sign up api注册失败");
-        console.log(error);
-        console.log("sign up api注册失败时的返回值");
         if (!error.response) {
-            console.log("==== sign up 的返回值为false ==== 没有响应");
             return false;
         }
         const data = error.response.data;
@@ -90,8 +86,6 @@ export const createTeam = async (name, leader_id) =>
         localStorage.setItem('team_name', name);
         return true;
     } catch (error) {
-        console.log("创建队伍失败 createTeam -api");
-        console.log(error);
         if (!error.response) {
             const user_id = localStorage.getItem('user_id');
             if (user_id) {

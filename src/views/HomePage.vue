@@ -2,19 +2,15 @@
     <div class="bg">
       <img src="@/assets/icons/homeWave1.svg" id="wave1">
       <img src="@/assets/icons/homeCherry.svg" id="cherry">
-      
         <img src="@/assets/icons/homeTitle.png" id="title">
         <button @click="goToSignUpPage" v-if="haveTeam">
           继续游戏
           <img src="@/assets/icons/flag.svg" id="flag">
-          
         </button >
         <button @click="goToSignUpPage" v-else>
           新人报名
           <img src="@/assets/icons/flag.svg" id="flag">
-          
         </button>
-        
       <img src="@/assets/icons/homeWave2.svg" id="wave2">
       <div class="authorArea">
         <img src="@/assets/icons/whu1.svg" id="whu1">
@@ -33,12 +29,7 @@ console.log('home page')
 const router = useRouter()
 const goToSignUpPage = () => {
   if (haveTeam.value) {
-    // let start_time = localStorage.getItem('start_time')
-    // if (start_time) {
-    //   router.push('/playing')
-    // } else {
-      router.push('/prepare')
-    // }
+    router.push('/prepare')
   } else {
     router.push('/signUp')
   }
@@ -50,13 +41,8 @@ onMounted(() => {
     haveTeam.value = true
   }
   console.log('home page mounted')
-  // console.log('click')
-  // router.push('/signUp')
 })
 
-// const eventTest = () => {
-//   console.log('click event test')
-// }
 </script>
   
 <style lang="less" scoped>
@@ -71,14 +57,12 @@ onMounted(() => {
     box-sizing: border-box;
   }
   .bg {
-    /* 初始页 */
     position: relative;
     width: 100%;
     height: 100vh;
     background: #71CBB4;
     overflow: hidden;
     z-index: 1;
-    /* display: flex; */
     #wave1 {
       position: absolute;
       width: 303px;
@@ -119,12 +103,11 @@ onMounted(() => {
       }
     
     #cherry {
-      /* 首页樱花 */
-    position: absolute;
-    left: 32px;
-    top: 98px;
-    width: 173px;
-    height: auto;
+      position: absolute;
+      left: 32px;
+      top: 98px;
+      width: 173px;
+      height: auto;
     }
     #wave2 {
       position: absolute;
@@ -134,15 +117,15 @@ onMounted(() => {
       top: 54.06%;
     }
     .authorArea {
-      position: absolute;
-      bottom: 0px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 10vh;
+        position: absolute;
+        bottom: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 10vh;
       #whu1 {
         width: 148px;
         height: auto;
