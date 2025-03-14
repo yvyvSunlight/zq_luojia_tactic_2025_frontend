@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
-const baseURL = process.env.NODE_ENV === 'production' ? 'http://121.36.231.2:8080/v6' : 'http://121.36.231.2:8080/v6';
+const baseURL = process.env.NODE_ENV === 'production' ? 'http://121.36.231.2:8080/v6' : 'http://127.0.0.1:8000/v6';
 // 区分生产环境和开发环境
 
 
