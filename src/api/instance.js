@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
-const baseURL = process.env.NODE_ENV === 'production' ? 'https://121.36.231.2:8080/v6' : 'https://127.0.0.1:8000/v6';
+const baseURL = process.env.NODE_ENV === 'production' ? 'https://121.36.231.2:8080' : 'https://127.0.0.1:8000/v6';
 // 区分生产环境和开发环境
 
 
@@ -30,6 +30,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.code === 'ECONNABORTED') {
       // 请求超时
+      console.log(error)
       ElMessage.error('请求超时！请检查网络状况！');
     }
     // if (error.response) {
