@@ -61,14 +61,3 @@ jobs:
 
       - name: Upload Files
         run: obsutil cp dist/ obs://${{ secrets.OBS_BUCKET_NAME }}/ -f -r -flat
-
-      - name: Notify Success
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 Successfully deployed to Huawei OBS!'
-            })
