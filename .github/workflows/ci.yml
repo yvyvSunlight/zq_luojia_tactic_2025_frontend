@@ -1,4 +1,4 @@
-name: Vue CI/CD
+name: Deploy to OBS
 
 on:
   push:
@@ -31,44 +31,44 @@ jobs:
       - name: Build (Generate static files)
         run: pnpm run build
 
-      - name: Setup aliyun OSS
-        uses: yizhoumo/setup-ossutil@v1
-        with:
-          endpoint: oss-cn-hangzhou.aliyuncs.com
-          access-key-id: ${{ secrets.AL_KEY_ID }}
-          access-key-secret: ${{ secrets.AL_KEY_SECRET }}
-
-      - name: Upload files to OSS
-        run: |
-          ossutil rm -f oss://zq-luojia-tactic/ -r
-          ossutil cp -rf dist oss://zq-luojia-tactic/
-          ossutil set-meta oss://zq-luojia-tactic/ Cache-Control:no-cache --include "*.html" -r
-
-      - name: Refresh CDN
-        uses: visionwx/ali-cdn-refresh@v0.1.1
-        with:
-          accessKeyId: ${{ secrets.AL_KEY_ID }}
-          accessKeySecret: ${{ secrets.AL_KEY_SECRET }}
-          type: Directory
-          path: https://luojiatactic.ziqiang.net.cn/
-
-      # - name: Configure obsutil
-      #   run: |
-      #     wget https://obs-community.obs.cn-north-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz
-      #     tar -xzf obsutil_linux_amd64.tar.gz
-      #     sudo mv obsutil_linux_amd64_*/obsutil /usr/local/bin/
-      #     obsutil config -i=${{ secrets.HUAWEI_OBS_AK }} -k=${{ secrets.HUAWEI_OBS_SK }} -e=${{ secrets.OBS_ENDPOINT }}
-
-      # - name: Upload Files
-      #   run: obsutil cp dist/ obs://${{ secrets.OBS_BUCKET_NAME }}/ -f -r -flat
-
-      # - name: Notify Success
-      #   uses: actions/github-script@v6
+      # - name: Setup aliyun OSS
+      #   uses: yizhoumo/setup-ossutil@v1
       #   with:
-      #     script: |
-      #       github.rest.issues.createComment({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: '🚀 Successfully deployed to Huawei OBS!'
-      #       })
+      #     endpoint: oss-cn-hangzhou.aliyuncs.com
+      #     access-key-id: ${{ secrets.AL_KEY_ID }}
+      #     access-key-secret: ${{ secrets.AL_KEY_SECRET }}
+
+      # - name: Upload files to OSS
+      #   run: |
+      #     ossutil rm -f oss://zq-luojia-tactic/ -r
+      #     ossutil cp -rf dist oss://zq-luojia-tactic/
+      #     ossutil set-meta oss://zq-luojia-tactic/ Cache-Control:no-cache --include "*.html" -r
+
+      # - name: Refresh CDN
+      #   uses: visionwx/ali-cdn-refresh@v0.1.1
+      #   with:
+      #     accessKeyId: ${{ secrets.AL_KEY_ID }}
+      #     accessKeySecret: ${{ secrets.AL_KEY_SECRET }}
+      #     type: Directory
+      #     path: https://luojiatactic.ziqiang.net.cn/
+
+      - name: Configure obsutil
+        run: |
+          wget https://obs-community.obs.cn-north-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz
+          tar -xzf obsutil_linux_amd64.tar.gz
+          sudo mv obsutil_linux_amd64_*/obsutil /usr/local/bin/
+          obsutil config -i=${{ secrets.HUAWEI_OBS_AK }} -k=${{ secrets.HUAWEI_OBS_SK }} -e=${{ secrets.OBS_ENDPOINT }}
+
+      - name: Upload Files
+        run: obsutil cp dist/ obs://${{ secrets.OBS_BUCKET_NAME }}/ -f -r -flat
+
+      - name: Notify Success
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Successfully deployed to Huawei OBS!'
+            })
