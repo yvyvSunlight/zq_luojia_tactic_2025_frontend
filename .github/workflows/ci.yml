@@ -1,4 +1,4 @@
-name: Vue3 CI/CD
+name: Vue CI/CD
 
 on:
   push:
@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Use Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
 
@@ -51,3 +51,24 @@ jobs:
           accessKeySecret: ${{ secrets.AL_KEY_SECRET }}
           type: Directory
           path: https://luojiatactic.ziqiang.net.cn/
+
+      # - name: Configure obsutil
+      #   run: |
+      #     wget https://obs-community.obs.cn-north-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz
+      #     tar -xzf obsutil_linux_amd64.tar.gz
+      #     sudo mv obsutil_linux_amd64_*/obsutil /usr/local/bin/
+      #     obsutil config -i=${{ secrets.HUAWEI_OBS_AK }} -k=${{ secrets.HUAWEI_OBS_SK }} -e=${{ secrets.OBS_ENDPOINT }}
+
+      # - name: Upload Files
+      #   run: obsutil cp dist/ obs://${{ secrets.OBS_BUCKET_NAME }}/ -f -r -flat
+
+      # - name: Notify Success
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: '🚀 Successfully deployed to Huawei OBS!'
+      #       })

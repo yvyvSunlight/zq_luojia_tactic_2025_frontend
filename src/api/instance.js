@@ -8,7 +8,7 @@ const baseURL = process.env.NODE_ENV === 'production' ? 'https://121.36.231.2:80
 // 创建一个axios实例 并导出
 export const instance = axios.create({
   baseURL: baseURL,
-  timeout: 20000,
+  timeout: 15000,
   withCredentials: true,
 });
 
