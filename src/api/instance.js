@@ -8,7 +8,7 @@ const baseURL = process.env.NODE_ENV === 'production' ? 'https://121.36.231.2:80
 // 创建一个axios实例 并导出
 export const instance = axios.create({
   baseURL: baseURL,
-  timeout: 15000,
+  timeout: 12000,
   withCredentials: true,
 });
 
@@ -30,7 +30,7 @@ instance.interceptors.response.use(
     if (error.code === 'ECONNABORTED') {
       // 请求超时
       console.log(error)
-      ElMessage.error('请求超时！请检查网络状况！');
+      ElMessage.error('请求超时！');
     } else if (!error.response) {
       // 没有响应的情况
       console.log('没有响应');
